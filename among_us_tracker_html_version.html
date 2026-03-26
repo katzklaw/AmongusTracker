@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Among Us Tracker</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      margin: 0;
+      padding: 10px;
+    }
+
+    h1 {
+      margin: 0 0 10px 0;
+    }
+
+    .controls {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 8px;
+    }
+
+    .card {
+      position: relative;
+      padding: 8px;
+      border-radius: 10px;
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-height: 110px;
+      user-select: none;
+    }
+
+    .name {
+      font-weight: bold;
+      margin-bottom: 4px;
+    }
+
+    .status {
+      font-size: 20px;
+      margin: 4px 0;
+    }
+
+    .rounds {
+      display: flex;
+      gap: 4px;
+      margin-top: 4px;
+    }
+
+    .round {
+      width: 16px;
+      height: 16px;
+      border: 1px solid black;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      cursor: pointer;
+      background: white;
+    }
+
+    .actions {
+      display: flex;
+      gap: 5px;
+      margin-top: 6px;
+    }
+
+    .deadIcon {
+      position: absolute;
+      top: 4px;
+      right: 6px;
+      font-size: 18px;
+    }
+
+    .redX {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+    }
+
+    .line {
+      position: absolute;
+      width: 140%;
+      height: 6px;
+      background: red;
+      top: 50%;
+      left: -20%;
+    }
+
+    .hidden {
+      opacity: 0.2;
+    }
+
+    .dead {
+      filter: grayscale(100%);
+    }
+  </style>
+</head>
+<body>
+
+<h1>Among Us Tracker</h1>
+
+<div class="controls">
+  <button onclick="resetAll()">Reset All</button>
+  <button onclick="resetRound()">Reset Round</button>
+</div>
+
+<div id="grid" class="grid"></div>
+
+<script>
+const colors = [
+  "Red","Blue","Green","Pink","Orange","Yellow",
+  "Black","White","Purple","Brown","Cyan","Lime",
+  "Maroon","Rose","Banana","Grey","Tan","Coral"
+];
+
+const colorMap = {
+  Red:"#ff4d4d", Blue:"#4d79ff", Green:"#4dff88", Pink:"#ff66cc",
+  Orange:"#ff944d", Yellow:"#ffff66", Black:"#333333", White:"#f2f2f2",
+  Purple:"#b366ff", Brown:"#8B4513", Cyan:"#66ffff", Lime:"#99ff33",
+  Maroon:"#800000", Rose:"#ff4d6d", Banana:"#ffe135", Grey:"#808080",
+  Tan:"#d2b48c", Coral:"#ff7f50"
+};
+
+let status = {};
+let dead = {};
+let hidden = {};
+let rounds = {};
+
+function init() {
+  colors.forEach(c => {
+    status[c] = "Neutral";
+    dead[c] = false;
+    hidden[c] = false;
+    rounds[c] = [false,false,false];
+  });
+  render();
+}
+
+function cycleStatus(c) {
+  const order = ["Neutral","Sus","Clear"];
+  const i = order.indexOf(status[c]);
+  status[c] = order[(i+1)%3];
+  render();
+}
+
+function toggleDead(e,c){
+  e.stopPropagation();
+  dead[c] = !dead[c];
+  render();
+}
+
+function toggleHidden(e,c){
+  e.stopPropagation();
+  hidden[c] = !hidden[c];
+  render();
+}
+
+function toggleRound(e,c,i){
+  e.stopPropagation();
+  rounds[c][i] = !rounds[c][i];
+  render();
+}
+
+function resetAll(){
+  init();
+}
+
+function resetRound(){
+  colors.forEach(c => {
+    if(!hidden[c]){
+      status[c] = "Neutral";
+      dead[c] = false;
+      rounds[c] = [false,false,false];
+    }
+  });
+  render();
+}
+
+function render(){
+  const grid = document.getElementById("grid");
+  grid.innerHTML = "";
+
+  const sorted = [...colors].sort((a,b)=>{
+    if(hidden[a] !== hidden[b]) return hidden[a] ? 1 : -1;
+    if(dead[a] !== dead[b]) return dead[a] ? 1 : -1;
+    return colors.indexOf(a) - colors.indexOf(b);
+  });
+
+  sorted.forEach(c => {
+    const card = document.createElement("div");
+    card.className = "card";
+    card.style.background = colorMap[c];
+
+    if(dead[c]) card.classList.add("dead");
+    if(hidden[c]) card.classList.add("hidden");
+
+    card.onclick = () => cycleStatus(c);
+
+    if(dead[c]){
+      const skull = document.createElement("div");
+      skull.className = "deadIcon";
+      skull.textContent = "☠";
+      card.appendChild(skull);
+
+      const x = document.createElement("div");
+      x.className = "redX";
+
+      const l1 = document.createElement("div");
+      l1.className = "line";
+      l1.style.transform = "rotate(45deg)";
+
+      const l2 = document.createElement("div");
+      l2.className = "line";
+      l2.style.transform = "rotate(-45deg)";
+
+      x.appendChild(l1);
+      x.appendChild(l2);
+      card.appendChild(x);
+    }
+
+    const name = document.createElement("div");
+    name.className = "name";
+    name.textContent = c;
+    card.appendChild(name);
+
+    const statusDiv = document.createElement("div");
+    statusDiv.className = "status";
+    statusDiv.textContent = status[c] === "Sus" ? "❌" : status[c] === "Clear" ? "✔" : "";
+    card.appendChild(statusDiv);
+
+    const roundsDiv = document.createElement("div");
+    roundsDiv.className = "rounds";
+
+    rounds[c].forEach((r,i)=>{
+      const box = document.createElement("div");
+      box.className = "round";
+      box.textContent = r ? "✔" : "";
+      box.style.background = r ? "black" : "white";
+      box.style.color = r ? "white" : "black";
+      box.onclick = (e) => toggleRound(e,c,i);
+      roundsDiv.appendChild(box);
+    });
+
+    card.appendChild(roundsDiv);
+
+    const actions = document.createElement("div");
+    actions.className = "actions";
+
+    const deadBtn = document.createElement("button");
+    deadBtn.textContent = "☠";
+    deadBtn.onclick = (e) => toggleDead(e,c);
+
+    const hideBtn = document.createElement("button");
+    hideBtn.textContent = "✖";
+    hideBtn.onclick = (e) => toggleHidden(e,c);
+
+    actions.appendChild(deadBtn);
+    actions.appendChild(hideBtn);
+
+    card.appendChild(actions);
+
+    grid.appendChild(card);
+  });
+}
+
+init();
+</script>
+
+</body>
+</html>
