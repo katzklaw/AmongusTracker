@@ -1,124 +1,139 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Among Us Tracker</title>
-  <style>
-    body {
-      font-family: sans-serif;
-      margin: 0;
-      padding: 10px;
-    }
-
-    h1 {
-      margin: 0 0 10px 0;
-    }
-
-    .controls {
-      display: flex;
-      gap: 10px;
-      margin-bottom: 10px;
-    }
-
-    .grid {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 8px;
-    }
-
-    .card {
-      position: relative;
-      padding: 8px;
-      border-radius: 10px;
-      cursor: pointer;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      min-height: 110px;
-      user-select: none;
-      overflow: hidden;
-    }
-
-    .name {
-      font-weight: bold;
-      margin-bottom: 4px;
-    }
-
-    .status {
-      font-size: 20px;
-      margin: 4px 0;
-    }
-
-    .rounds {
-      display: flex;
-      gap: 4px;
-      margin-top: 4px;
-    }
-
-    .round {
-      width: 16px;
-      height: 16px;
-      border: 1px solid black;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 12px;
-      cursor: pointer;
-      background: white;
-    }
-
-    .actions {
-      display: flex;
-      gap: 5px;
-      margin-top: 6px;
-    }
-
-    .deadIcon {
-      position: absolute;
-      top: 4px;
-      right: 6px;
-      font-size: 18px;
-    }
-
-    .redX {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      pointer-events: none;
-    }
-
-    .line {
-      position: absolute;
-      width: 100%;
-      height: 6px;
-      background: red;
-      top: 50%;
-      left: 0;
-      transform-origin: center;
-      filter: drop-shadow(0 0 4px red);
-    }
-
-    .hidden {
-      opacity: 0.2;
-    }
-
-    .dead {
-      filter: grayscale(100%);
-    }
-  </style>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Among Us Tracker</title>
+<style>
+body {
+  font-family: sans-serif;
+  margin: 0;
+  padding: 10px;
+}
+h1 {
+  margin: 0 0 10px 0;
+}
+.controls {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+.grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+}
+.card {
+  position: relative;
+  padding: 8px;
+  border-radius: 10px;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-height: 150px;
+  user-select: none;
+  overflow: hidden;
+}
+.nameRow {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-bottom: 4px;
+}
+.name {
+  font-weight: bold;
+}
+.nameInput {
+  font-weight: bold;
+  font-size: 13px;
+  width: 90px;
+  padding: 1px 3px;
+}
+.editBtn {
+  font-size: 11px;
+  cursor: pointer;
+  background: rgba(255,255,255,0.6);
+  border: 1px solid rgba(0,0,0,0.3);
+  border-radius: 4px;
+  padding: 0 3px;
+  line-height: 1.4;
+}
+.status {
+  font-size: 20px;
+  margin: 4px 0;
+}
+.rounds {
+  display: flex;
+  gap: 4px;
+  margin-top: 4px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+.round {
+  width: 16px;
+  height: 16px;
+  border: 1px solid black;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  cursor: pointer;
+  background: white;
+}
+.susBy {
+  margin-top: 6px;
+  width: 100%;
+}
+.susBy select {
+  width: 100%;
+  font-size: 11px;
+  padding: 2px;
+  cursor: pointer;
+}
+.actions {
+  display: flex;
+  gap: 5px;
+  margin-top: 6px;
+}
+.deadIcon {
+  position: absolute;
+  top: 4px;
+  right: 6px;
+  font-size: 18px;
+}
+.redX {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+.line {
+  position: absolute;
+  width: 100%;
+  height: 6px;
+  background: red;
+  top: 50%;
+  left: 0;
+  transform-origin: center;
+  filter: drop-shadow(0 0 4px red);
+}
+.hidden {
+  opacity: 0.2;
+}
+.dead {
+  filter: grayscale(100%);
+}
+</style>
 </head>
 <body>
-
 <h1>Among Us Tracker</h1>
-
 <div class="controls">
   <button onclick="resetAll()">Reset All</button>
   <button onclick="resetRound()">Reset Round</button>
 </div>
-
 <div id="grid" class="grid"></div>
 
 <script>
@@ -127,7 +142,6 @@ const colors = [
   "Black","White","Purple","Brown","Cyan","Lime",
   "Maroon","Rose","Banana","Grey","Tan","Coral"
 ];
-
 const colorMap = {
   Red:"#ff4d4d", Blue:"#4d79ff", Green:"#32a852", Pink:"#ff66cc",
   Orange:"#ff944d", Yellow:"#ffff66", Black:"#333333", White:"#f2f2f2",
@@ -136,17 +150,24 @@ const colorMap = {
   Tan:"#d2b48c", Coral:"#ff908a"
 };
 
+const ROUND_COUNT = 5; // was 3, bumped up for extra "clear" tracking boxes
+
 let status = {};
 let dead = {};
 let hidden = {};
 let rounds = {};
+let names = {};
+let susBy = {};
 
 function init() {
+  editingName = null;
   colors.forEach(c => {
     status[c] = "Neutral";
     dead[c] = false;
     hidden[c] = false;
-    rounds[c] = [false,false,false];
+    rounds[c] = Array(ROUND_COUNT).fill(false);
+    names[c] = c;      // names reset back to color names here
+    susBy[c] = "";      // who sussed this player
   });
   render();
 }
@@ -176,6 +197,28 @@ function toggleRound(e,c,i){
   render();
 }
 
+let editingName = null;
+
+function startRename(e,c){
+  e.stopPropagation();
+  editingName = c;
+  render();
+}
+
+function saveRename(e,c){
+  e.stopPropagation();
+  const val = e.target.value.trim();
+  if(val !== "") names[c] = val;
+  editingName = null;
+  render();
+}
+
+function setSusBy(e,c){
+  e.stopPropagation();
+  susBy[c] = e.target.value;
+  render();
+}
+
 function resetAll(){
   init();
 }
@@ -185,7 +228,9 @@ function resetRound(){
     if(!hidden[c]){
       status[c] = "Neutral";
       dead[c] = false;
-      rounds[c] = [false,false,false];
+      rounds[c] = Array(ROUND_COUNT).fill(false);
+      susBy[c] = "";
+      // names[c] is intentionally left untouched here
     }
   });
   render();
@@ -205,10 +250,8 @@ function render(){
     const card = document.createElement("div");
     card.className = "card";
     card.style.background = colorMap[c];
-
     if(dead[c]) card.classList.add("dead");
     if(hidden[c]) card.classList.add("hidden");
-
     card.onclick = () => cycleStatus(c);
 
     if(dead[c]){
@@ -219,24 +262,48 @@ function render(){
 
       const x = document.createElement("div");
       x.className = "redX";
-
       const l1 = document.createElement("div");
       l1.className = "line";
       l1.style.transform = "translateY(-50%) rotate(45deg)";
-
       const l2 = document.createElement("div");
       l2.className = "line";
       l2.style.transform = "translateY(-50%) rotate(-45deg)";
-
       x.appendChild(l1);
       x.appendChild(l2);
       card.appendChild(x);
     }
 
-    const name = document.createElement("div");
-    name.className = "name";
-    name.textContent = c;
-    card.appendChild(name);
+    const nameRow = document.createElement("div");
+    nameRow.className = "nameRow";
+
+    if(editingName === c){
+      const input = document.createElement("input");
+      input.type = "text";
+      input.value = names[c];
+      input.className = "nameInput";
+      input.onclick = (e) => e.stopPropagation();
+      input.onblur = (e) => saveRename(e,c);
+      input.onkeydown = (e) => {
+        e.stopPropagation();
+        if(e.key === "Enter") e.target.blur();
+      };
+      nameRow.appendChild(input);
+      setTimeout(() => { input.focus(); input.select(); }, 0);
+    } else {
+      const name = document.createElement("div");
+      name.className = "name";
+      name.textContent = names[c];
+      nameRow.appendChild(name);
+
+      const editBtn = document.createElement("button");
+      editBtn.className = "editBtn";
+      editBtn.textContent = "✏";
+      editBtn.title = "Rename";
+      editBtn.onclick = (e) => startRename(e,c);
+      nameRow.appendChild(editBtn);
+    }
+
+    card.appendChild(nameRow);
 
     const statusDiv = document.createElement("div");
     statusDiv.className = "status";
@@ -245,7 +312,6 @@ function render(){
 
     const roundsDiv = document.createElement("div");
     roundsDiv.className = "rounds";
-
     rounds[c].forEach((r,i)=>{
       const box = document.createElement("div");
       box.className = "round";
@@ -253,8 +319,29 @@ function render(){
       box.onclick = (e) => toggleRound(e,c,i);
       roundsDiv.appendChild(box);
     });
-
     card.appendChild(roundsDiv);
+
+    const susByDiv = document.createElement("div");
+    susByDiv.className = "susBy";
+    const select = document.createElement("select");
+    select.onclick = (e) => e.stopPropagation();
+    select.onchange = (e) => setSusBy(e,c);
+
+    const noneOpt = document.createElement("option");
+    noneOpt.value = "";
+    noneOpt.textContent = "Sused by...";
+    select.appendChild(noneOpt);
+
+    colors.filter(other => other !== c).forEach(other => {
+      const opt = document.createElement("option");
+      opt.value = other;
+      opt.textContent = names[other];
+      if(susBy[c] === other) opt.selected = true;
+      select.appendChild(opt);
+    });
+
+    susByDiv.appendChild(select);
+    card.appendChild(susByDiv);
 
     const actions = document.createElement("div");
     actions.className = "actions";
@@ -269,7 +356,6 @@ function render(){
 
     actions.appendChild(deadBtn);
     actions.appendChild(hideBtn);
-
     card.appendChild(actions);
 
     grid.appendChild(card);
@@ -278,6 +364,5 @@ function render(){
 
 init();
 </script>
-
 </body>
 </html>
