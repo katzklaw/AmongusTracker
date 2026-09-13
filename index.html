@@ -310,16 +310,18 @@ function render(){
     statusDiv.textContent = status[c] === "Sus" ? "❌" : status[c] === "Clear" ? "✔" : "";
     card.appendChild(statusDiv);
 
-    const roundsDiv = document.createElement("div");
-    roundsDiv.className = "rounds";
-    rounds[c].forEach((r,i)=>{
-      const box = document.createElement("div");
-      box.className = "round";
-      box.textContent = r ? "✔" : "";
-      box.onclick = (e) => toggleRound(e,c,i);
-      roundsDiv.appendChild(box);
-    });
-    card.appendChild(roundsDiv);
+    if(status[c] !== "Clear"){
+      const roundsDiv = document.createElement("div");
+      roundsDiv.className = "rounds";
+      rounds[c].forEach((r,i)=>{
+        const box = document.createElement("div");
+        box.className = "round";
+        box.textContent = r ? "✔" : "";
+        box.onclick = (e) => toggleRound(e,c,i);
+        roundsDiv.appendChild(box);
+      });
+      card.appendChild(roundsDiv);
+    }
 
     const susByDiv = document.createElement("div");
     susByDiv.className = "susBy";
